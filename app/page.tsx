@@ -7,7 +7,7 @@ export default function Home() {
     <div>
       <h1>About Me</h1>
       <p>This is a first page.</p>
-      <Link href="/student">Go to student</Link>
+      <Link href="https://nuntawatt.github.io/nanthawat.github.io/">Go to About ME</Link>
     </div>
   );
 }
