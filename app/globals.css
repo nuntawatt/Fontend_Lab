@@ -1,40 +1,45 @@
-/* globals.css */
-.btn-custom-type {
-  background-color: #ffcb05;
-  color: #3d7dca;
-  border: none;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  margin: 0.2rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'daisyui/dist/full.css';
+
+:root {
+  --foreground-rgb: 46, 46, 46;
+  --background-start-rgb: 242, 242, 242;
+  --background-end-rgb: 255, 255, 255;
+  --primary-color: #F68B20; /* Yellow */
+  --secondary-color: #F2E500; /* Light Yellow */
+  --accent-color: #FF0000; /* Red */
 }
 
-.btn-custom-type:hover {
-  background-color: #f2a900;
-  color: #ffffff;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
 }
 
-.btn-custom-ability {
-  background-color: #7ac74c;
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  margin: 0.2rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }
 
-.btn-custom-ability:hover {
-  background-color: #5aaf3a;
-  color: #ffffff;
+.card {
+  border: 2px solid var(--primary-color);
+  border-radius: 10px;
 }
 
-.button-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+h2 {
+  color: var(--primary-color);
+}
+
+.card-title {
+  color: var(--accent-color);
 }

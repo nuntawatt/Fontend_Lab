@@ -1,61 +1,80 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import React from "react";
+
+interface PokemonList {
+  count: number;
+  next: string;
+  previous?: any;
+  results: Pokemon[];
+}
 
 interface Pokemon {
   name: string;
   url: string;
 }
 
-interface PokemonDetails {
-  name: string;
-  height: number;
-  weight: number;
-  types: { type: { name: string } }[];
-  abilities: { ability: { name: string } }[];
-  sprites: { other: { "official-artwork": { front_default: string } } };
-}
-
 export default function Page() {
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-  const [selectedPokemon, setSelectedPokemon] = useState<PokemonDetails | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const router = useRouter();
+  const [pokemonData, setPokemonData] = React.useState<PokemonList>({} as PokemonList);
+  const [displayCount, setDisplayCount] = React.useState(20);
 
-  useEffect(() => {
-    fetch("https://pokeapi.co/api/v2/pokemon?limit=100")
-      .then((res) => res.json())
-      .then((data) => setPokemons(data.results))
-      .catch((err) => console.error("Error fetching Pokemon data:", err));
+  React.useEffect(() => {
+    const getData = async () => {
+      const result = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1500")
+        .then((res) => res.json())
+        .then((res) => {
+          const pokemonData: PokemonList = res as PokemonList;
+          setPokemonData(pokemonData);
+        })
+        .catch((err) => console.error(err));
+    };
+    getData();
   }, []);
 
-  const handleShowDetails = (name: string) => {
-    router.push(`/pokemon/${name}`);
+  const DisplayPokemonList = () => {
+    if (pokemonData && pokemonData.results) {
+      const displayedPokemons = pokemonData.results.slice(0, displayCount); 
+      return (
+        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {displayedPokemons.map((p) => {
+            const pokemonId = p.url.split('/')[6];
+            const imgURL = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`; 
+            return (
+              <li key={p.name} className="bg-red-200 shadow-md rounded-lg p-1 text-center">
+                <img src={imgURL} alt={p.name} className="mx-auto w-24 h-24" /> 
+                <Link href={`/pokemon/${p.name}`} className="text-red-600 hover:text-yellow-600 font-semibold text-2xl">
+                  {p.name.charAt(0).toUpperCase() + p.name.slice(1)}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      );
+    } else {
+      return (
+        <div className="flex justify-center items-center h-screen">
+          <img 
+            src="https://media.tenor.com/AN7EVQ3CG0UAAAAi/pikachu-pokemon.gif"
+            alt="Loading..."
+            className="mx-auto w-56 h-56" 
+          />
+        </div>
+      );
+    }
+  };
+
+  const handleShowMore = () => {
+    setDisplayCount((prevCount) => prevCount + 20); 
   };
 
   return (
-    <div className="container">
-      <h1>Pokedex Lab</h1>
-      <div className="row">
-        {pokemons.map((pokemon, index) => (
-          <div className="col-3" key={index}>
-            <div
-              className="card"
-              style={{ marginBottom: "1rem", cursor: "pointer" }}
-              onClick={() => handleShowDetails(pokemon.name)}
-            >
-              <img
-                className="card-img-top"
-                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${index + 1}.png`}
-                alt={`Image of ${pokemon.name}`}
-                style={{ width: "100%", height: "auto" }}
-              />
-              <div className="card-body">
-                <h5 className="card-title">{pokemon.name}</h5>
-              </div>
-            </div>
-          </div>
-        ))}
+    <div className="container mx-auto p-5">
+      <h1 className="text-4xl font-bold text-center mb-6 text-red-600">Pokémon List</h1>
+      <DisplayPokemonList />
+      <div className="text-center mt-5">
+        <button onClick={handleShowMore} className="btn btn-primary">
+          Show More
+        </button>
       </div>
     </div>
   );
